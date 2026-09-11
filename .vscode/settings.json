@@ -1,10 +1,9 @@
 {
     "material-icon-theme.activeIconPack": "nest",
     "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": false,
     "[typescript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "editor.formatOnSave": true
-    },
-    "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": false
+        "editor.formatOnSave": false
+    }
 }

@@ -1,10 +1,9 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { User } from './user.entity';
 import { RolePermissions } from './role_permissions.entity';
 
-@Entity('roles')
-export class Role {
+@Entity('permissions')
+export class Permission {
     @PrimaryGeneratedColumn()
     id!: number;
     @Column({ unique: true, nullable: false, length: 50 })
@@ -14,8 +13,6 @@ export class Role {
     @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt!: Date;
 
-    @OneToMany(() => User, (user) => user.role)
-    users!: User[];
-    @OneToMany(() => RolePermissions, (rolePermission) => rolePermission.role)
+    @OneToMany(() => RolePermissions, (rolePermission) => rolePermission.permission)
     rolePermissions!: RolePermissions[];
 }

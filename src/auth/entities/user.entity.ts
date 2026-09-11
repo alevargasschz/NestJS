@@ -14,6 +14,13 @@ export class User {
     password!: string;
     @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt!: Date;
+    @Column({
+        name: 'updated_at',
+        type: 'timestamp',
+        default: () => 'CURRENT_TIMESTAMP',
+        onUpdate: 'CURRENT_TIMESTAMP',
+    })
+    updatedAt!: Date;
 
     @ManyToOne(() => Role, (role) => role.users, { nullable: false, eager: false })
     @JoinColumn({ name: 'role_id' })

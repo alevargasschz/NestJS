@@ -1,17 +1,23 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { User } from 'src/auth/users/entities/user.entity';
+import { ActivityLog } from 'src/activity_logs/entities/activity_log.entity';
+import { User } from 'src/auth/entities/user.entity';
+import { RoutinesExercise } from 'src/routines_exercises/entities/routines_exercise.entity';
 
 @Entity('routines')
 export class Routine {
     @PrimaryGeneratedColumn()
     id!: number;
-    @Column({ unique: true, nullable: false, length: 50 })
+
+    @Column({ nullable: false, length: 100 })
     name!: string;
-    @Column({ nullable: false, length: 255 })
+
+    @Column({ nullable: false, type: 'text' })
     description!: string;
+
     @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt!: Date;
+
     @Column({
         name: 'updated_at',
         type: 'timestamp',
@@ -20,5 +26,13 @@ export class Routine {
     })
     updatedAt!: Date;
 
+    @ManyToOne(() => User, (user) => user.routines, { nullable: false })
+    @JoinColumn({ name: 'user_id' })
     user!: User;
+
+    @OneToMany(() => RoutinesExercise, (routineExercise) => routineExercise.routine)
+    routineExercises!: RoutinesExercise[];
+
+    @OneToMany(() => ActivityLog, (activityLog) => activityLog.routine)
+    activityLogs!: ActivityLog[];
 }

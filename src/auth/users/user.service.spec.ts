@@ -1,21 +1,24 @@
 import { TestingModule, Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-
-
 import { Role } from '../entities/role.entity';
 import { User } from '../entities/user.entity';
+import { RolesService } from '../roles/roles.service';
 
 import { UsersService } from './users.service';
-import { RolesService } from '../roles/roles.service';
+import { CreateUserDto } from './dto/create-user.dto';
 
 describe('UsersService', () => {
     let userService: UsersService;
 
     const mockRepository = {
         find: jest.fn(),
+        create: jest.fn(),
+        save: jest.fn(),
     };
-    const mockRoleService = {};
+    const mockRoleService = {
+        findOne: jest.fn(),
+    };
 
     beforeEach(async () => {
         jest.clearAllMocks(); // por cada prueba limpia los mocks para que no se acumulen
@@ -90,5 +93,56 @@ describe('UsersService', () => {
         //ASSERT
         expect(mockedUsersResult).toEqual(mockedUsers);
         expect(mockRepository.find).toHaveBeenCalledTimes(1);
+        expect(mockRepository.find).toHaveBeenCalledWith({
+            relations: {
+                role: true,
+            },
+        });
+    });
+
+    it('should create a new user', async () => {
+        // PREPARACION - ARRANGE
+        const createUserDto: CreateUserDto = {
+            username: 'User 1',
+            email: 'user1@example.com',
+            password: 'password1',
+            roleId: 1,
+        };
+        const mockedRole: Role = {
+            id: 1,
+            name: 'Admin',
+            description: 'Administrator role',
+            createdAt: new Date(),
+            users: [],
+            rolePermissions: [],
+        };
+        const mockedUser: User = {
+            id: 1,
+            name: 'User 1',
+            email: 'user1@example.com',
+            password: 'password1',
+            role: mockedRole,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            routines: [],
+            activityLogs: [],
+        };
+        mockRoleService.findOne.mockResolvedValue(mockedRole);
+        mockRepository.create.mockResolvedValue(mockedUser);
+        mockRepository.save.mockResolvedValue(mockedUser);
+
+        // ACT
+        const createdUser = await userService.create(createUserDto);
+
+        // ASSERT
+        expect(createdUser).toEqual(mockedUser);
+        expect(mockRoleService.findOne).toHaveBeenCalledTimes(1);
+        expect(mockRoleService.findOne).toHaveBeenCalledWith(createUserDto.roleId);
+        expect(mockRepository.create).toHaveBeenCalledTimes(1);
+        expect(mockRepository.create).toHaveBeenCalledWith({
+            ...createUserDto,
+            role: mockedRole,
+        });
+        expect(mockRepository.save).toHaveBeenCalledTimes(1);
     });
 });

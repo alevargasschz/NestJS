@@ -1,8 +1,8 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { User } from 'src/auth/entities/user.entity';
-import { ActivitiesExercise } from 'src/activities_exercises/entities/activities_exercise.entity';
-import { Routine } from 'src/routines/entities/routine.entity';
+import { User } from '../../auth/entities/user.entity';
+import { ActivitiesExercise } from '../../activities_exercises/entities/activities_exercise.entity';
+import { Routine } from '../../routines/entities/routine.entity';
 
 @Entity('activity_logs')
 export class ActivityLog {

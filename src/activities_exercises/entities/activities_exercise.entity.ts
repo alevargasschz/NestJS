@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
-import { ActivityLog } from 'src/activity_logs/entities/activity_log.entity';
-import { RoutinesExercise } from 'src/routines_exercises/entities/routines_exercise.entity';
+import { ActivityLog } from '../../activity_logs/entities/activity_log.entity';
+import { RoutinesExercise } from '../../routines_exercises/entities/routines_exercise.entity';
 
 @Entity('activities_exercises')
 export class ActivitiesExercise {

@@ -29,4 +29,23 @@ describe('UsersService', () => {
     it('should work the service', () => {
         expect(userService).toBeDefined();
     });
+
+    it('should return all users with roles', async () => {
+        // PREPARACION - ARRANGE
+        const mockedUsers = [
+            {
+                id: 1,
+                name: 'User 1',
+                email: 'user1@example.com',
+                password: 'password1',
+                role: {
+                    id: 1,
+                    name: 'Admin'
+                },
+                createdAt: new Date(),
+            }
+        ]
+        // 
+        
+    });
 });

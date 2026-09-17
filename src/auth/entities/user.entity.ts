@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { ActivityLog } from 'src/activity_logs/entities/activity_log.entity';
-import { Routine } from 'src/routines/entities/routine.entity';
+import { ActivityLog } from '../../activity_logs/entities/activity_log.entity';
+import { Routine } from '../../routines/entities/routine.entity';
 
 import { Role } from './role.entity';
 

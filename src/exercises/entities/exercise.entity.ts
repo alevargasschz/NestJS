@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { RoutinesExercise } from 'src/routines_exercises/entities/routines_exercise.entity';
+import { RoutinesExercise } from '../../routines_exercises/entities/routines_exercise.entity';
 
 @Entity('exercises')
 export class Exercise {

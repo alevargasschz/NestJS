@@ -127,7 +127,7 @@ describe('UsersService', () => {
             routines: [],
             activityLogs: [],
         };
-        mockRoleService.findOne.mockResolvedValue(mockedRole);
+        mockRoleService.findOne.mockReturnValue(mockedRole);
         mockRepository.create.mockResolvedValue(mockedUser);
         mockRepository.save.mockResolvedValue(mockedUser);
 

@@ -1,15 +1,20 @@
 import { TestingModule, Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { RolesService } from '../roles/roles.service';
+
+
+import { Role } from '../entities/role.entity';
 import { User } from '../entities/user.entity';
 
 import { UsersService } from './users.service';
+import { RolesService } from '../roles/roles.service';
 
 describe('UsersService', () => {
     let userService: UsersService;
 
-    const mockRepository = {};
+    const mockRepository = {
+        find: jest.fn(),
+    };
     const mockRoleService = {};
 
     beforeEach(async () => {
@@ -32,20 +37,58 @@ describe('UsersService', () => {
 
     it('should return all users with roles', async () => {
         // PREPARACION - ARRANGE
-        const mockedUsers = [
+        const mockedRoles: Role[] = [
+            {
+                id: 1,
+                name: 'Admin',
+                description: 'Administrator role',
+                createdAt: new Date(),
+                users: [],
+                rolePermissions: [],
+            },
+        ];
+        const mockedUsers: User[] = [
             {
                 id: 1,
                 name: 'User 1',
                 email: 'user1@example.com',
                 password: 'password1',
-                role: {
-                    id: 1,
-                    name: 'Admin'
-                },
+                role: mockedRoles[0],
                 createdAt: new Date(),
-            }
-        ]
-        // 
-        
+                updatedAt: new Date(),
+                routines: [],
+                activityLogs: [],
+            },
+            {
+                id: 2,
+                name: 'User 2',
+                email: 'user2@example.com',
+                password: 'password2',
+                role: mockedRoles[0],
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                routines: [],
+                activityLogs: [],
+            },
+            {
+                id: 3,
+                name: 'User 3',
+                email: 'user3@example.com',
+                password: 'password3',
+                role: mockedRoles[0],
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                routines: [],
+                activityLogs: [],
+            },
+        ];
+        mockRepository.find.mockResolvedValue(mockedUsers);
+
+        // ACT
+        const mockedUsersResult = await userService.findAll();
+
+        //ASSERT
+        expect(mockedUsersResult).toEqual(mockedUsers);
+        expect(mockRepository.find).toHaveBeenCalledTimes(1);
     });
 });

@@ -30,7 +30,11 @@ export class UsersService {
     }
 
     findAll() {
-        return this.userRepository.find();
+        return this.userRepository.find({
+            relations: {
+                role: true,
+            },
+        });
     }
 
     findOne(id: number) {

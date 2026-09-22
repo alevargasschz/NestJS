@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { ConfigService } from 'node_modules/@nestjs/config/dist/config.service';
+import { JwtModule } from 'node_modules/@nestjs/jwt/dist/jwt.module';
 
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
@@ -10,6 +12,18 @@ import { RolesPermissionsModule } from './roles_permissions/roles_permissions.mo
 @Module({
     controllers: [AuthController],
     providers: [AuthService],
-    imports: [UsersModule, RolesModule, PermissionsModule, RolesPermissionsModule],
+    imports: [
+        UsersModule,
+        RolesModule,
+        PermissionsModule,
+        RolesPermissionsModule,
+        JwtModule.registerAsync({
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService) => ({
+                secret: configService.get<string>('JWT_SECRET'),
+                signOptions: { expiresIn: configService.get<string>('JWT_EXPIRES_IN') },
+            }),
+        }),
+    ],
 })
 export class AuthModule {}

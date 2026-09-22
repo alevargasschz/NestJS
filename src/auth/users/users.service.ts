@@ -49,26 +49,19 @@ export class UsersService {
 
     async findOne(id?: number, email?: string) {
         const identifier = id ?? email;
-        const where = email !== undefined ? { email } : { id };
 
         const user = await this.userRepository.findOne({
-            where,
+            where: {
+                id: id,
+                email: email,
+            },
             relations: {
-                role: true,
+                role: {
+                    rolePermissions: true,
+                },
             },
         });
-        if (!user) throw new UserNotFoundException(identifier ?? 'desconocido');
-        return user;
-    }
-
-    async findOneByEmail(email: string): Promise<User> {
-        const user = await this.userRepository.findOne({
-            where: { email },
-            relations: {
-                role: true,
-            },
-        });
-        if (!user) throw new UserNotFoundException(email);
+        if (!user) throw new UserNotFoundException(identifier ?? 'unknown');
         return user;
     }
 

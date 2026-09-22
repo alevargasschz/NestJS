@@ -49,16 +49,12 @@ export class UsersService {
 
     async findOne(id?: number, email?: string) {
         const identifier = id ?? email;
+        const where = email ? { email } : { id };
 
         const user = await this.userRepository.findOne({
-            where: {
-                id: id,
-                email: email,
-            },
+            where,
             relations: {
-                role: {
-                    rolePermissions: true,
-                },
+                role: true,
             },
         });
         if (!user) throw new UserNotFoundException(identifier ?? 'unknown');

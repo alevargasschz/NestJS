@@ -4,6 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from 'node_modules/@nestjs/config/dist/config.service';
 
+import { UserNotFoundException } from 'src/common/exceptions/http/user-not-found.exception';
+
 import { User } from '../entities/user.entity';
 import { RolesService } from '../roles/roles.service';
 
@@ -45,13 +47,29 @@ export class UsersService {
         });
     }
 
-    async findOne(id: number) {
-        return this.userRepository.find({
-            where: { id },
+    async findOne(id?: number, email?: string) {
+        const identifier = id ?? email;
+        const where = email !== undefined ? { email } : { id };
+
+        const user = await this.userRepository.findOne({
+            where,
             relations: {
                 role: true,
             },
         });
+        if (!user) throw new UserNotFoundException(identifier ?? 'desconocido');
+        return user;
+    }
+
+    async findOneByEmail(email: string): Promise<User> {
+        const user = await this.userRepository.findOne({
+            where: { email },
+            relations: {
+                role: true,
+            },
+        });
+        if (!user) throw new UserNotFoundException(email);
+        return user;
     }
 
     async update(id: number, _updateUserDto: UpdateUserDto) {

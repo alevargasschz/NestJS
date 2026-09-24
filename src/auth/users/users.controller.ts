@@ -1,34 +1,70 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { UsersService } from './users.service';
+import {
+    Controller,
+    Get,
+    Post,
+    Body,
+    Patch,
+    Param,
+    Delete,
+    HttpCode,
+    HttpStatus,
+    InternalServerErrorException,
+    UseGuards,
+} from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+
+import { PositiveIntPipe } from '../../common/pipes/positive-int-pipe';
+import { Permissions } from '../decorators/permissions.decorator';
+import { PermissionsGuard } from '../guards/permissions.guard';
+import { UsersService } from '../users/users.service';
+
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
 export class UsersController {
-    constructor(private readonly usersService: UsersService) {}
+    constructor(private readonly userService: UsersService) {}
 
     @Post()
+    @HttpCode(HttpStatus.CREATED)
     create(@Body() createUserDto: CreateUserDto) {
-        return this.usersService.create(createUserDto);
+        return this.userService.create(createUserDto);
     }
 
     @Get()
+    @HttpCode(HttpStatus.OK)
+    @UseGuards(AuthGuard('jwt'), PermissionsGuard)
+    @Permissions('user:read')
     findAll() {
-        return this.usersService.findAll();
+        return this.userService.findAll();
     }
 
     @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.usersService.findOne(+id);
+    @HttpCode(HttpStatus.OK)
+    findOne(@Param('id', PositiveIntPipe) id: number) {
+        return this.userService.findOne(id);
     }
 
     @Patch(':id')
-    update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-        return this.usersService.update(+id, updateUserDto);
+    @HttpCode(HttpStatus.OK)
+    async update(@Param('id', PositiveIntPipe) id: number, @Body() updateUserDto: UpdateUserDto) {
+        try {
+            return await this.userService.update(id, updateUserDto);
+        } catch (error) {
+            // Si la excepción es del negocio (como UserNotFoundException), se relanza directamente
+            if (error instanceof Error && 'status' in error) {
+                throw error;
+            }
+            throw new InternalServerErrorException('Fallo al actualizar el usuario', {
+                cause: error,
+                description: 'Error inesperado al persistir los cambios en la base de datos.',
+            });
+        }
     }
 
     @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.usersService.remove(+id);
+    @HttpCode(HttpStatus.NO_CONTENT)
+    async remove(@Param('id', PositiveIntPipe) id: number) {
+        await this.userService.remove(id);
     }
 }

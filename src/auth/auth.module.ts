@@ -9,10 +9,11 @@ import { UsersModule } from './users/users.module';
 import { RolesModule } from './roles/roles.module';
 import { PermissionsModule } from './permissions/permissions.module';
 import { RolesPermissionsModule } from './roles_permissions/roles_permissions.module';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
     controllers: [AuthController],
-    providers: [AuthService],
+    providers: [AuthService, JwtStrategy],
     imports: [
         UsersModule,
         RolesModule,

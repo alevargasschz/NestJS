@@ -13,7 +13,7 @@ export class AuthService {
     ) {}
     async login(_loginInput: LoginInputDto) {
         // Verificar si el usuario existe en la base de datos
-        const user = await this.usersService.findOne(undefined, _loginInput.email);
+        const user = await this.usersService.findOne(_loginInput.email);
         if (!user) {
             throw new Error('Usuario no encontrado');
         }

@@ -24,7 +24,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     // Comprobar que el usuario del token si existe en el sistema
     async validate(payload: JwtPayload) {
         // Bucamos al usuario y lo mantenemos en el contexto
-        const user = await this.usersService.findOne(payload.sub);
+        // Recargar las relaciones que consume PermissionsGuard.
+        const user = await this.usersService.findOne(payload.sub, true);
 
         if (!user) throw new UnauthorizedException('Usuario no encontrado');
         return user;

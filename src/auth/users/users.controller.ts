@@ -34,7 +34,7 @@ export class UsersController {
     @Get()
     @HttpCode(HttpStatus.OK)
     @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-    @Permissions('user:read')
+    @Permissions('manage_users')
     findAll() {
         return this.userService.findAll();
     }

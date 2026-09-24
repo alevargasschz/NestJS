@@ -13,7 +13,9 @@ export class AuthService {
     ) {}
     async login(_loginInput: LoginInputDto) {
         // Verificar si el usuario existe en la base de datos
-        const user = await this.usersService.findOne(_loginInput.email);
+        // El guard necesita el rol y sus permisos, por lo que deben cargarse
+        // antes de construir el token.
+        const user = await this.usersService.findOne(_loginInput.email, true);
         if (!user) {
             throw new Error('Usuario no encontrado');
         }
@@ -29,7 +31,7 @@ export class AuthService {
 
         // Crear token
         const payload = {
-            userId: user.id,
+            sub: user.id,
             email: user.email,
             role: user.role.name,
             permissions: permissions,

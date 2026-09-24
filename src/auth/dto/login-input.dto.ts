@@ -1,9 +1,8 @@
-import { isString } from "class-validator"
+import { IsString } from 'class-validator';
 
 export class LoginInputDto {
-    
-    @isString()
-    email!: string,
-    @isString()
-    password!: string,
+    @IsString({ message: 'Email must be a string' })
+    email!: string;
+    @IsString({ message: 'Password must be a string' })
+    password!: string;
 }
